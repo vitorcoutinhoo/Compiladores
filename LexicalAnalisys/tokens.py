@@ -5,17 +5,23 @@
 # tokens of the language.
 
 # import the functions to get the automaton and the reserved words
-from reserved_words_and_automaton import get_automaton, get_reserved_words, get_final_states
+from reserved_words_and_automaton import (
+    get_automaton,
+    get_reserved_words,
+    get_final_states,
+)
 
 # import the reader pointer class
 from reader_pointer import ReaderPointer
 
 # global variables
-reserved_words = get_reserved_words() # get the reserved words
-final_states = get_final_states() # get the final states of the automaton
-automaton = get_automaton() # get the automaton
-pointer = ReaderPointer(r"LexicalAnalisys\in_out\input_code.txt") # create the reader pointer
-INITIAL_STATE = '0' # initial state of the automaton
+reserved_words = get_reserved_words()  # get the reserved words
+final_states = get_final_states()  # get the final states of the automaton
+automaton = get_automaton()  # get the automaton
+
+# create the reader pointer
+pointer = ReaderPointer(r"LexicalAnalisys\in_out\input_code.txt")
+INITIAL_STATE = "0"  # initial state of the automaton
 
 
 def get_token(reader_pointer: ReaderPointer):
@@ -30,10 +36,33 @@ def get_token(reader_pointer: ReaderPointer):
         pointer (list): The pointer position
     """
 
-    char = verify_char_is_digit(reader_pointer.get_char()[0]) # get the first char of the input code
-    state = automaton.loc[INITIAL_STATE, char] # get the transition from the initial state to the next state
+    # get the first char of the input code
+    char = verify_char_is_digit(reader_pointer.get_char()[0])
+    lexema = str(char)
 
-    return state
+    if char is None:
+        return "Token not recognized"
+
+    # get the transition from the initial state to the next state
+    state = automaton.loc[INITIAL_STATE, char]
+    print(f"{char} {[state]}")
+
+    # while the char is not None
+    while char is not None:  
+            
+        if lexema in reserved_words:  # if the lexema is a reserved word
+            return f"TK_{lexema}"  # return the reserved word
+
+        if state in final_states:
+            return final_states[state]  # return the token recognized
+
+        char = verify_char_is_digit(reader_pointer.get_char()[0])
+        lexema += str(char)
+        state = automaton.loc[state, char]
+        print(f"{char} {[state]}")
+
+    return "Token not recognized"  # return if the token is not recognized
+
 
 def verify_char_is_digit(char: str):
     """
@@ -46,10 +75,15 @@ def verify_char_is_digit(char: str):
         char (str): if the char is not a digit
         char (int): if the char is a digit (0-9)
     """
-    if char.isdigit():
+
+    if (char is not None) & str(char).isdigit():
         char = int(char)
+
     return char
 
-print(get_token(pointer)) # test the function
 
-    
+with open(r"LexicalAnalisys\in_out\tokens.txt", "w", encoding="utf-8") as file:
+    token = get_token(pointer)
+    while token != "Token not recognized":
+        file.write(token + "\n")
+        token = get_token(pointer)

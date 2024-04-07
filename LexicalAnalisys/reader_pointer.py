@@ -14,8 +14,9 @@ class ReaderPointer:
         """
         Constructor of the class
         """
+        # Open the file
         with open(code_path, "r", encoding="utf-8") as file:
-            self.lines = file.readlines()  # Read all the lines of the code
+            self.lines = file.readlines() # Read all the lines of the file
 
         self.pointer = [0, 0]  # Create a pointer in the first line and first column
 
@@ -27,19 +28,29 @@ class ReaderPointer:
             char (str): The character in the pointer position
             pointer (list): The pointer position
         """
-        # Verify if the pointer is in the end of the line
-        if self.pointer[1] < len(self.lines[self.pointer[0]]):
-            # Get the character in the pointer position
-            char = self.lines[self.pointer[0]][self.pointer[1]]
-            self.pointer[1] += 1
-        else:
-            # Check if there is a next line
-            if self.pointer[0] < len(self.lines) - 1:
-                self.pointer[0] += 1
-                self.pointer[1] = 0
-                return self.get_char()
-            else:
-                # If there is no next line, return None
-                return None, self.pointer
 
+        # Verify if the file is empty
+        if self.lines == []:
+            return "This file is empty"
+
+        line = self.lines[self.pointer[0]] # Get the line
+    
+        # Verify if the pointer of column is in the line
+        if self.pointer[1] < len(line):
+            char = line[self.pointer[1]] # Get the character
+        else:
+            self.pointer[0] += 1 # Go to the next line
+            self.pointer[1] = 0 # Go to the first column
+
+            # Verify if the pointer of line is in the file
+            if self.pointer[0] < len(self.lines):
+                next_line = self.lines[self.pointer[0]] # Get the next line
+                char = next_line[self.pointer[1]] # Get the first character of the next line
+
+            else:
+                char = None # Return none if the pointer is out of the file
+
+
+        self.pointer[1] += 1 # Go to the next column
         return char, self.pointer
+

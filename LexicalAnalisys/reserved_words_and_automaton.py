@@ -76,7 +76,6 @@ def get_final_states():
         '27': 'TK_CADEIA',
         '31': 'TK_ID',
         '33': 'comment',
-        '35': 'reserved_word',
         '36': 'TK_COLON',
         '37': 'TK_NOT',
         '38': 'TK_SUM',
