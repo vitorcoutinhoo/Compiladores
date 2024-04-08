@@ -1,2 +1,4 @@
 TK_ID
-TK_INT
+TK_ATT
+TK_ID
+TK_SUM

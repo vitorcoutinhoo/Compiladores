@@ -97,3 +97,10 @@ def get_final_states():
     }
 
     return states
+
+def get_back_states():
+    '''
+    Function to get the back states of the automaton
+    '''
+
+    return ['3', '6', '10', '31', '35', '61', '62']

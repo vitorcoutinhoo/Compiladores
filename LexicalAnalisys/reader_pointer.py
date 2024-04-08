@@ -20,37 +20,37 @@ class ReaderPointer:
 
         self.pointer = [0, 0]  # Create a pointer in the first line and first column
 
-    def get_char(self):
+    def get_char(self, pointer_list: list):
         """
         Get the character in the pointer position
+
+        Args:
+            pointer_list (list): The pointer position
 
         Returns:
             char (str): The character in the pointer position
             pointer (list): The pointer position
         """
 
+        # Get the row and column of the pointer
+        row, column = pointer_list
+
         # Verify if the file is empty
         if self.lines == []:
             return "This file is empty"
+        
+        if row >= len(self.lines):
+            return None
+        
+        # Get the character in the pointer position
+        char = self.lines[row][column]
+        column += 1 # Move the column to the next position
+        
+        # Verify if the column is bigger than the line
+        if column >= len(self.lines[row]):
+            row += 1
+            column = 0
 
-        line = self.lines[self.pointer[0]] # Get the line
-    
-        # Verify if the pointer of column is in the line
-        if self.pointer[1] < len(line):
-            char = line[self.pointer[1]] # Get the character
-        else:
-            self.pointer[0] += 1 # Go to the next line
-            self.pointer[1] = 0 # Go to the first column
-
-            # Verify if the pointer of line is in the file
-            if self.pointer[0] < len(self.lines):
-                next_line = self.lines[self.pointer[0]] # Get the next line
-                char = next_line[self.pointer[1]] # Get the first character of the next line
-
-            else:
-                char = None # Return none if the pointer is out of the file
-
-
-        self.pointer[1] += 1 # Go to the next column
+        # Update the pointer
+        self.pointer = [row, column]
         return char, self.pointer
-
