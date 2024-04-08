@@ -46,7 +46,6 @@ def get_token(reader_pointer: ReaderPointer):
         return "Token not recognized"
 
     if char == " ":
-
         char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0])
 
     # get the transition from the initial state to the next state
