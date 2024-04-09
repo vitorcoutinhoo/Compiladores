@@ -22,7 +22,7 @@ back_states = get_back_states()  # get the back states of the automaton
 automaton = get_automaton()  # get the automaton
 
 # create the reader pointer
-pointer = ReaderPointer(r"LexicalAnalisys\in_out\input_code.txt")
+pointer = ReaderPointer(r"LexicalAnalisys/in_out/input_code.txt")
 INITIAL_STATE = "0"  # initial state of the automaton
 
 
@@ -45,11 +45,15 @@ def get_token(reader_pointer: ReaderPointer):
     if char is None:
         return "Token not recognized"
 
+    if (char == "\n"):
+        char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0]) 
+
     if char == " ":
         char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0])
 
     # get the transition from the initial state to the next state
     state = automaton.loc[INITIAL_STATE, char]
+    print(char, state, reader_pointer.pointer)
 
     # while the char is not None
     while char is not None:
@@ -64,15 +68,21 @@ def get_token(reader_pointer: ReaderPointer):
             return final_states[state]  # return the token recognized
 
         char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0])
+        if (state == "58") & (char == "e"):
+            state == "7"
+            char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0])
+            print(char, state, reader_pointer.pointer)
+        
         lexema += str(char)
 
         if char == " ":
             char = verify_char_is_digit(
                 reader_pointer.get_char(reader_pointer.pointer)[0]
             )
-
+            print(char, state, reader_pointer.pointer)
+            
         state = automaton.loc[state, char]
-
+        print(char, state, reader_pointer.pointer)
     return "Token not recognized"  # return if the token is not recognized
 
 
@@ -94,7 +104,7 @@ def verify_char_is_digit(char: str):
     return char
 
 
-with open(r"LexicalAnalisys\in_out\tokens.txt", "w", encoding="utf-8") as file:
+with open(r"LexicalAnalisys/in_out/tokens.txt", "w", encoding="utf-8") as file:
     token = get_token(pointer)
     while token != "Token not recognized":
         file.write(token + "\n")

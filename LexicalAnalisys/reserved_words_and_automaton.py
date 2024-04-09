@@ -50,7 +50,7 @@ def get_automaton():
     # Create a automaton from a dictionary
     data = {}  # dictionary to store the transitions
     with open(
-        r"LexicalAnalisys\automaton\automaton.txt", "r", encoding="utf-8"
+        r"LexicalAnalisys/automaton/automaton.txt", "r", encoding="utf-8"
     ) as file:
         for line in file:
             line = line.split()
