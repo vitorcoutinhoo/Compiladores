@@ -40,7 +40,7 @@ class ReaderPointer:
             return "This file is empty"
         
         if row >= len(self.lines):
-            return None
+            return None, []
         
         # Get the character in the pointer position
         char = self.lines[row][column]

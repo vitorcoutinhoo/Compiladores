@@ -26,12 +26,12 @@ pointer = ReaderPointer(r"LexicalAnalisys/in_out/input_code.txt")
 INITIAL_STATE = "0"  # initial state of the automaton
 
 
-def get_token(reader_pointer: ReaderPointer):
+def get_token(reader: ReaderPointer):
     """
     Function to get the next token in the input code
 
     Args:
-        reader_pointer (ReaderPointer): The pointer to read the input code
+        reader (ReaderPointer): The pointer to read the input code
 
     Returns:
         token (str): The token recognized
@@ -39,51 +39,67 @@ def get_token(reader_pointer: ReaderPointer):
     """
 
     # get the first char of the input code
-    char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0])
-    lexema = str(char)
+    char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
 
+    # if the first char is a new line or a blank space, get the next char
+    if char == "\n":
+        char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
+
+    # ignore the blank spaces
+    while char == " ":
+        char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
+
+    # if the fist char is None, return the token not recognized
     if char is None:
-        return "Token not recognized"
+        return "END OF FILE"
 
-    if (char == "\n"):
-        char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0]) 
-
-    if char == " ":
-        char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0])
+    # create the lexema with the first char
+    lexema = str(char)
 
     # get the transition from the initial state to the next state
     state = automaton.loc[INITIAL_STATE, char]
-    print(char, state, reader_pointer.pointer)
+
+    if (char is None) & (state not in final_states):
+        return "ERROR: TOKEN NOT RECONIZED"
+
+    # if the state is not recognized, return the token not recognized
+    if state == "-":
+        return "ERROR: TOKEN NOT RECOGNIZED"
 
     # while the char is not None
     while char is not None:
-
-        if lexema in reserved_words:  # if the lexema is a reserved word
+        
+        # if the lexema is a reserved word
+        if lexema in reserved_words:  
             return f"TK_{lexema}"  # return the reserved word
 
+        # if the state is a final state, return the token recognized
         if state in final_states:
             if state in back_states:
-                reader_pointer.pointer[1] -= 1  # return the pointer to the last char
+                reader.pointer[1] -= 1  # return the pointer to the last char
                 lexema = lexema[:-1]
             return final_states[state]  # return the token recognized
 
-        char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0])
-        if (state == "58") & (char == "e"):
-            state == "7"
-            char = verify_char_is_digit(reader_pointer.get_char(reader_pointer.pointer)[0])
-            print(char, state, reader_pointer.pointer)
-        
+        # get the next char
+        char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
+
+        # ignore the blank spaces
+        while char == " ":
+            char = verify_char_is_digit(
+                reader.get_char(reader.pointer)[0]  # get the next char
+            )
+
+        # add the char to the lexema
         lexema += str(char)
 
-        if char == " ":
-            char = verify_char_is_digit(
-                reader_pointer.get_char(reader_pointer.pointer)[0]
-            )
-            print(char, state, reader_pointer.pointer)
-            
+        # get the next state
         state = automaton.loc[state, char]
-        print(char, state, reader_pointer.pointer)
-    return "Token not recognized"  # return if the token is not recognized
+
+        # if the state is not recognized, return the token not recognized
+        if state == "-":
+            return "ERROR: TOKEN NOT RECOGNIZED"
+
+    return "ERROR: TOKEN NOT RECOGNIZED"  # return if the token is not recognized
 
 
 def verify_char_is_digit(char: str):
@@ -106,6 +122,6 @@ def verify_char_is_digit(char: str):
 
 with open(r"LexicalAnalisys/in_out/tokens.txt", "w", encoding="utf-8") as file:
     token = get_token(pointer)
-    while token != "Token not recognized":
+    while token != "END OF FILE":
         file.write(token + "\n")
         token = get_token(pointer)
