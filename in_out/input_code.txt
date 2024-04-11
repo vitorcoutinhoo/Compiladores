@@ -1,8 +1,14 @@
-# Ex-01-correto.cic
+.123
+0.123
+23.23
+134.5
+123.
+123.212314
+123.13141e10
+1.0e-12
 
-rotina
-   imprima("Digite um nro")
-   leia(nUmErO)
-   nUm <== nUm <> 123 
-   imprima(123.e10)
-fim_rotina
+0x123 
+0x0
+3x3F 
+FxAAAAAAAAA 
+3x3

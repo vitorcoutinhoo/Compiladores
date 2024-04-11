@@ -23,7 +23,6 @@ automaton = get_automaton()  # get the automaton
 
 # create the reader pointer
 pointer = ReaderPointer(r"Lexical-Analyzer/in_out/input_code.txt")
-INITIAL_STATE = "0"  # initial state of the automaton
 
 def get_token(reader: ReaderPointer):
     """
@@ -36,6 +35,7 @@ def get_token(reader: ReaderPointer):
         token (str): The token recognized
         pointer (list): The pointer position
     """
+    initial_state = "0"  # initial state of the automaton
 
     # get the first char of the input code
     char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
@@ -52,7 +52,7 @@ def get_token(reader: ReaderPointer):
       return "END OF FILE", lexema
 
     # get the transition from the initial state to the next state
-    state = automaton.loc[INITIAL_STATE, char]
+    state = automaton.loc[initial_state, char]
 
     # if the state is not recognized, return the token not recognized
     if state == "-":
@@ -79,6 +79,7 @@ def get_token(reader: ReaderPointer):
         aux = state
         while char == " ":
             state = aux
+            char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
 
         # add the char to the lexema
         lexema += str(char)
