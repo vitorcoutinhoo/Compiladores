@@ -22,9 +22,8 @@ back_states = get_back_states()  # get the back states of the automaton
 automaton = get_automaton()  # get the automaton
 
 # create the reader pointer
-pointer = ReaderPointer(r"LexicalAnalisys/in_out/input_code.txt")
+pointer = ReaderPointer(r"Lexical-Analyzer/in_out/input_code.txt")
 INITIAL_STATE = "0"  # initial state of the automaton
-
 
 def get_token(reader: ReaderPointer):
     """
@@ -41,30 +40,23 @@ def get_token(reader: ReaderPointer):
     # get the first char of the input code
     char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
 
-    # if the first char is a new line or a blank space, get the next char
-    if char == "\n":
-        char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
-
-    # ignore the blank spaces
-    while char == " ":
-        char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
+    # get the next char of the input code if the char is \t, \n or blank
+    while (char == "\t") or (char == "\n") or (char == " "):
+      char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
+  
+    # create the lexema with the first char
+    lexema = str(char)
 
     # if the fist char is None, return the token not recognized
     if char is None:
-        return "END OF FILE"
-
-    # create the lexema with the first char
-    lexema = str(char)
+      return "END OF FILE", lexema
 
     # get the transition from the initial state to the next state
     state = automaton.loc[INITIAL_STATE, char]
 
-    if (char is None) & (state not in final_states):
-        return "ERROR: TOKEN NOT RECONIZED"
-
     # if the state is not recognized, return the token not recognized
     if state == "-":
-        return "ERROR: TOKEN NOT RECOGNIZED"
+        return "ERROR: TOKEN NOT RECOGNIZED", lexema
 
     # while the char is not None
     while char is not None:
@@ -78,16 +70,15 @@ def get_token(reader: ReaderPointer):
             if state in back_states:
                 reader.pointer[1] -= 1  # return the pointer to the last char
                 lexema = lexema[:-1]
-            return final_states[state]  # return the token recognized
+            return final_states[state], lexema  # return the token recognized
 
         # get the next char
         char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
 
-        # ignore the blank spaces
+        # while the char is blank, stay in the same state
+        aux = state
         while char == " ":
-            char = verify_char_is_digit(
-                reader.get_char(reader.pointer)[0]  # get the next char
-            )
+            state = aux
 
         # add the char to the lexema
         lexema += str(char)
@@ -97,9 +88,9 @@ def get_token(reader: ReaderPointer):
 
         # if the state is not recognized, return the token not recognized
         if state == "-":
-            return "ERROR: TOKEN NOT RECOGNIZED"
+            return "ERROR: TOKEN NOT RECOGNIZED", lexema
 
-    return "ERROR: TOKEN NOT RECOGNIZED"  # return if the token is not recognized
+    return "ERROR: TOKEN NOT RECOGNIZED", lexema  # return if the token is not recognized
 
 
 def verify_char_is_digit(char: str):
@@ -114,14 +105,15 @@ def verify_char_is_digit(char: str):
         char (int): if the char is a digit (0-9)
     """
 
-    if (char is not None) & str(char).isdigit():
+    if char is not None and str(char).isdigit():
         char = int(char)
 
     return char
 
 
-with open(r"LexicalAnalisys/in_out/tokens.txt", "w", encoding="utf-8") as file:
-    token = get_token(pointer)
+with open(r"Lexical-Analyzer/in_out/tokens.txt", "w", encoding="utf-8") as file:
+    token, lex = get_token(pointer)
     while token != "END OF FILE":
-        file.write(token + "\n")
-        token = get_token(pointer)
+        file.write(f"{token} --> {lex}" + "\n")
+        token, lex = get_token(pointer)
+  
