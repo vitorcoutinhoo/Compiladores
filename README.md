@@ -16,7 +16,7 @@ _codes_:
 - _reader_pointer.py_: Classe responsável por ler o arquivo de entrada.
 - _reserved_words_and_automaton.py_: Contém funções relacionadas a criação do automato, <br> guardar as palavras reservadas e os estados finais.
 - _tokens.py_: Função responsável por identificar os tokens
-- _tables.pu_: Classe responsável pela criação das tabelas
+- _tables.py_: Classe responsável pela criação das tabelas
 
 _main.py_: Arquivo principal
 
