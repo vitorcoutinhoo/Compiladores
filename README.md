@@ -12,8 +12,11 @@ _in_out_:
 - Contém o arquivo de entrada (input_code.txt).
 - Contém o arquivo de saída (tokens.txt).
 
-_reader_pointer.py_: Classe responsável por ler o arquivo de entrada.
+_codes_:
+- _reader_pointer.py_: Classe responsável por ler o arquivo de entrada.
+- _reserved_words_and_automaton.py_: Contém funções relacionadas a criação do automato, <br> guardar as palavras reservadas e os estados finais.
+- _tokens.py_: Função responsável por identificar os tokens
+- _tables.pu_: Classe responsável pela criação das tabelas
 
-_reserved_words_and_automaton.py_: Contém funções relacionadas a criação do automato, <br> guardar as palavras reservadas e os estados finais.
+_main.py_: Arquivo principal
 
-_tokens.py_: Função responsável por identificar os tokens (main)
