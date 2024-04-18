@@ -39,18 +39,18 @@ class ReaderPointer:
         if self.lines == []:
             return "This file is empty"
         
-        if row >= len(self.lines):
-            return None, []
-        
-        # Get the character in the pointer position
-        char = self.lines[row][column]
-        column += 1 # Move the column to the next position
-        
-        # Verify if the column is bigger than the line
+        # If the column is bigger than the line, go to the next line
         if column >= len(self.lines[row]):
             row += 1
             column = 0
 
-        # Update the pointer
+        # Verify if the pointer is in the end of the file
+        if row == len(self.lines):
+            return None, []
+
+        # Get the character in the pointer position
+        char = self.lines[row][column]
+        column += 1
+        
         self.pointer = [row, column]
         return char, self.pointer

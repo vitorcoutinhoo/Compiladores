@@ -1,13 +1,6 @@
-TK_FLOAT --> .123
-TK_FLOAT --> 0.123
-TK_FLOAT --> 23.23
-TK_FLOAT --> 134.5
-TK_FLOAT --> 123.
-TK_FLOAT --> 123.212314
-TK_FLOAT --> 123.13141e10
-TK_FLOAT --> 1.0e-12
-TK_END --> 0x123
-TK_END --> 0x0
-TK_END --> 3x3F
-TK_END --> FxAAAAAAAAA
-TK_END --> 3x3
+TK_INT --> 10 [0, 2]
+TK_INT --> 10 [0, 5]
+TK_INT --> 10 [0, 8]
+TK_INT --> 10 [1, 2]
+TK_INT --> 10 [1, 5]
+TK_INT --> 10 [1, 8]

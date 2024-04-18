@@ -42,7 +42,7 @@ def get_automaton():
     letters = [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)]
     operators = ["+", "-", "~", "*", "%", "=", "<", ">", "&", "|"]
     signals = ['"', "_", "#", "\n"]
-    separators = ["(", ")", ".", ":", "/"]
+    separators = ["(", ")", ".", ":", "/", " ", "\t"]
 
     # all symbols --> dataframe column names
     columns = digits + letters + operators + signals + separators
@@ -50,7 +50,7 @@ def get_automaton():
     # Create a automaton from a dictionary
     data = {}  # dictionary to store the transitions
     with open(
-        r"LexicalAnalisys/automaton/automaton.txt", "r", encoding="utf-8"
+        r"automaton/automaton.txt", "r", encoding="utf-8"
     ) as file:
         for line in file:
             line = line.split()
@@ -104,3 +104,8 @@ def get_back_states():
     '''
 
     return ['3', '6', '10', '31', '35', '61', '62']
+
+# any time if the automaton.txt is changed, the df.txt will be updated
+at = get_automaton()
+with open(r"automaton/df.txt", "w", encoding="utf-8") as files:
+    files.write(at.to_string())
