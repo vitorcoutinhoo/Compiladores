@@ -14,7 +14,7 @@ from codes.reserved_words_and_automaton import (
 
 from codes.reader_pointer import ReaderPointer
 
-# global variables
+# list of reserved words, final states, back states and automaton dataframe
 reserved_words = get_reserved_words()  # get the reserved words
 final_states = get_final_states()  # get the final states of the automaton
 back_states = get_back_states()  # get the back states of the automaton
@@ -37,32 +37,39 @@ def get_token(reader: ReaderPointer):
 
     # get the first char of the input code
     char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
-  
+
     # create the lexema with the first char
     lexema = str(char)
-    while char in (" ", "\n", "\t"): 
-        lexema = lexema[:-1] # remove from lexema if the first char it is a space, tab or newline
-        
+    while char in (" ", "\n", "\t"):
+        lexema = lexema[
+            :-1
+        ]  # remove from lexema if the first char it is a space, tab or newline
+
         char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
         lexema += str(char)
 
     # if the fist char is None, return end of file
     if char is None:
-        return "END OF FILE", lexema, reader.pointer
+        return "END OF FILE", lexema, reader.pointer, 0
 
     # get the transition from the initial state to the next state
     state = automaton.loc[initial_state, char]
 
     # if the state is not recognized, return the token not recognized
     if state == "-":
-        return "ERROR: TOKEN NOT RECOGNIZED", lexema, reader.pointer
+        return "ERROR: TOKEN NOT RECOGNIZED", lexema, reader.pointer, state
 
     # while the char is not None
     while char is not None:
-        
+
         # if the lexema is a reserved word
-        if lexema in reserved_words:  
-            return f"TK_{lexema}", lexema, [reader.pointer[0], reader.pointer[1]] # return the reserved word
+        if lexema in reserved_words:
+            return (
+                f"TK_{lexema}",
+                lexema,
+                [reader.pointer[0], reader.pointer[1] - len(lexema) + 1],
+                state,
+            )  # return the reserved word
 
         # if the state is a final state, return the token recognized
         if state in final_states:
@@ -70,14 +77,19 @@ def get_token(reader: ReaderPointer):
                 if reader.pointer[1] > 0:
                     reader.pointer[1] -= 1  # return the pointer to the last char
                 lexema = lexema[:-1]
-            return final_states[state], lexema, [reader.pointer[0], reader.pointer[1]] # return the token recognized
+            return (
+                final_states[state],
+                lexema,
+                [reader.pointer[0], reader.pointer[1] - len(lexema) + 1],
+                state,
+            )  # return the token recognized
 
         # get the next char
         char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
 
         # if the char is None, return end of file
         if char is None:
-            return "END OF FILE", lexema, reader.pointer
+            return "END OF FILE", lexema, reader.pointer, 0
 
         # add the char to the lexema
         lexema += str(char)
@@ -87,9 +99,14 @@ def get_token(reader: ReaderPointer):
 
         # if the state is not recognized, return the token not recognized
         if state == "-":
-            return "ERROR: TOKEN NOT RECOGNIZED", lexema, reader.pointer
+            return "ERROR: TOKEN NOT RECOGNIZED", lexema, reader.pointer, state
 
-    return "ERROR: TOKEN NOT RECOGNIZED", lexema, reader.pointer  # return if the token is not recognized
+    return (
+        "ERROR: TOKEN NOT RECOGNIZED",
+        lexema,
+        reader.pointer,
+        state,
+    )  # return if the token is not recognized
 
 
 def verify_char_is_digit(char: str):

@@ -16,7 +16,7 @@ class ReaderPointer:
         """
         # Open the file
         with open(code_path, "r", encoding="utf-8") as file:
-            self.lines = file.readlines() # Read all the lines of the file
+            self.lines = file.readlines()  # Read all the lines of the file
 
         self.pointer = [0, 0]  # Create a pointer in the first line and first column
 
@@ -38,7 +38,7 @@ class ReaderPointer:
         # Verify if the file is empty
         if self.lines == []:
             return "This file is empty"
-        
+
         # If the column is bigger than the line, go to the next line
         if column >= len(self.lines[row]):
             row += 1
@@ -51,6 +51,6 @@ class ReaderPointer:
         # Get the character in the pointer position
         char = self.lines[row][column]
         column += 1
-        
+
         self.pointer = [row, column]
         return char, self.pointer
