@@ -14,6 +14,12 @@ from codes.reserved_words_and_automaton import (
 
 from codes.reader_pointer import ReaderPointer
 
+# valid chars for the reserved words, just lowercase and underscore
+valid_chars = set("abcdefghijklmnopqrstuvwxyz_")
+
+# invalid chars for fist char of the identifier, just uppercase
+invalid_chars = set("GHIJKLMNOPQRSTUVWXYZ")
+
 # list of reserved words, final states, back states and automaton dataframe
 reserved_words = get_reserved_words()  # get the reserved words
 final_states = get_final_states()  # get the final states of the automaton
@@ -50,14 +56,36 @@ def get_token(reader: ReaderPointer):
 
     # if the fist char is None, return end of file
     if char is None:
-        return "END OF FILE", lexema, reader.pointer, 0
+        return (
+            "END OF FILE",
+            lexema,
+            [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+            0,
+        )
+    
+    if char in invalid_chars:
+        while char not in (" ", "\n", "\t"):
+            char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
+            lexema += str(char)
+        
+        return (
+            "ERROR",
+            lexema,
+            [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+            0,
+        )
 
     # get the transition from the initial state to the next state
     state = automaton.loc[initial_state, char]
 
     # if the state is not recognized, return the token not recognized
     if state == "-":
-        return "ERROR: TOKEN NOT RECOGNIZED", lexema, reader.pointer, state
+        return (
+            "ERROR",
+            lexema,
+            [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+            state,
+        )
 
     # while the char is not None
     while char is not None:
@@ -67,7 +95,7 @@ def get_token(reader: ReaderPointer):
             return (
                 f"TK_{lexema}",
                 lexema,
-                [reader.pointer[0], reader.pointer[1] - len(lexema) + 1],
+                [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
                 state,
             )  # return the reserved word
 
@@ -80,7 +108,7 @@ def get_token(reader: ReaderPointer):
             return (
                 final_states[state],
                 lexema,
-                [reader.pointer[0], reader.pointer[1] - len(lexema) + 1],
+                [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
                 state,
             )  # return the token recognized
 
@@ -94,17 +122,37 @@ def get_token(reader: ReaderPointer):
         # add the char to the lexema
         lexema += str(char)
 
+        # if the state is 34 and the char is not a valid char, return the error
+        if state == "34" and char not in valid_chars:
+            lexema = lexema[:-1]
+            reader.pointer[1] -= 1
+
+            return (
+                "ERROR",
+                lexema,
+                [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+                state,
+            )
+
         # get the next state
         state = automaton.loc[state, char]
 
         # if the state is not recognized, return the token not recognized
         if state == "-":
-            return "ERROR: TOKEN NOT RECOGNIZED", lexema, reader.pointer, state
+            lexema = lexema[:-1]
+            reader.pointer[1] -= 1
+
+            return (
+                "ERROR",
+                lexema,
+                [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+                state,
+            )
 
     return (
-        "ERROR: TOKEN NOT RECOGNIZED",
+        "ERROR",
         lexema,
-        reader.pointer,
+        [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
         state,
     )  # return if the token is not recognized
 

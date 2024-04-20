@@ -17,8 +17,20 @@ def verify_error(pointer, state):
         error (str): The error message
     """
 
-    # if the state is 0, the error is the character that is not recognized
+    # if the state is '-', the error is the character that is not recognized
     if state == "-":
         return "ERROR: UNRECOGNIZED TOKEN"
 
     return "ERROR:"
+
+def show_errors():
+    """
+    Function to show the errors in the code
+    """
+    with open("in_out/input_code.txt", "r", encoding="utf-8") as file:
+        code = file.readlines()
+        for i, line in enumerate(code):
+            print(f"[ {i+1}]  {line.strip("\n")}")
+
+
+

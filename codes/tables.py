@@ -26,8 +26,6 @@ class TableTokens():
             row (int): The row of the token
             column (int): The column of the token
         """
-        if token == 'comment':
-            return
 
         if token not in ('TK_ID', 'TK_INT', 'TK_FLOAT', 'TK_DATA', 'TK_END', 'TK_CADEIA'):
             lexeme = ''
