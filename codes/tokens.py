@@ -40,6 +40,7 @@ def get_token(reader: ReaderPointer):
         pointer (list): The pointer position
     """
     initial_state = "0"  # initial state of the automaton
+    flag = 0
 
     # get the first char of the input code
     char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
@@ -62,20 +63,61 @@ def get_token(reader: ReaderPointer):
             [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
             0,
         )
-    
+
     if char in invalid_chars:
         while char not in (" ", "\n", "\t"):
             char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
             lexema += str(char)
-        
+
         return (
             "ERROR",
+            lexema,
+            [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+            31,
+        )
+
+    # verify if a cadeia is open an not closed
+    if char == '"':
+        flag += 1
+
+        while flag < 2:
+            char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
+            lexema += str(char)
+
+            if char == "\n" or char is None:
+                lexema = lexema[:-1]
+                reader.pointer[1] -= 1
+
+                return (
+                    "ERROR",
+                    lexema,
+                    [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+                    27,
+                )
+
+            if char == '"':
+                flag += 1
+
+        if flag != 2:
+            lexema = lexema[:-1]
+            reader.pointer[1] -= 1
+
+            return (
+                "ERROR",
+                lexema,
+                [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+                27,
+            )
+
+        return (
+            "TK_CADEIA",
             lexema,
             [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
             0,
         )
 
     # get the transition from the initial state to the next state
+    anterior_state = initial_state
     state = automaton.loc[initial_state, char]
 
     # if the state is not recognized, return the token not recognized
@@ -114,6 +156,8 @@ def get_token(reader: ReaderPointer):
 
         # get the next char
         char = verify_char_is_digit(reader.get_char(reader.pointer)[0])
+        if char == '"':
+            flag += 1
 
         # if the char is None, return end of file
         if char is None:
@@ -135,10 +179,22 @@ def get_token(reader: ReaderPointer):
             )
 
         # get the next state
+        anterior_state = state
         state = automaton.loc[state, char]
 
         # if the state is not recognized, return the token not recognized
         if state == "-":
+            if anterior_state in ("16", "17", "18", "19", "20", "24", "25"):
+                lexema = lexema[:-1]
+                reader.pointer[1] -= 1
+
+                return (
+                    "ERROR",
+                    lexema,
+                    [reader.pointer[0] + 1, reader.pointer[1] - len(lexema) + 1],
+                    20,
+                )
+
             lexema = lexema[:-1]
             reader.pointer[1] -= 1
 

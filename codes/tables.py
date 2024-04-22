@@ -57,6 +57,9 @@ class TableTokens():
     def print_main_table(self):
         """
         Print the table
+
+        Returns:
+            table (str): The table with the tokens
         """
         header = ('+' + '-' * 5 + '+' + '-' * 5 + '+' + '-' * 15 + '+' + '-' * 22 + '+' + '\n' +
                    '|' + ' '  + 'ROW' + ' '  + '|' + ' '  + 'COL' + ' '  + '|' + ' ' * 2 + 'TOKEN' + ' ' * 8 + '|' + ' ' * 3 + 'LEXEMA' + ' ' * 13 + '|' + '\n' +
@@ -66,11 +69,15 @@ class TableTokens():
         for row in self.main_table:
             body.append(f"| {row[0]:>3} | {row[1]:>3} | {row[2]:<13} | {row[3]:<20} |" + '\n' + '+' + '-' * 5 + '+' + '-' * 5 + '+' + '-' * 15 + '+' + '-' * 22 + '+')
         
-        print(header + '\n'.join(body))
+        table = header + '\n'.join(body)
+        return table
 
     def print_count_table(self):
         """
         Print the count table
+
+        Returns:
+            table (str): The table with the tokens and the count
         """
 
         header = ('+' + '-' * 15 + '+' + '-' * 11 + '+' + '\n' + 
@@ -81,5 +88,6 @@ class TableTokens():
         for row in self.count_table:
             body.append(f"| {row[0]:<13} | {row[1]:>9} |" + '\n' + '+' + '-' * 15 + '+' + '-' * 11 + '+')
 
-        print(header + '\n'.join(body))
+        table = header + '\n'.join(body)
+        return table
 
