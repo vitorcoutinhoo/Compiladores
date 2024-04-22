@@ -8,9 +8,9 @@ _automaton_:
 - Contém o dicionario dos estados (automaton.txt), que serve para a <br> montagem da tabela de trasições.
 - Contém a tabela de trasições (df.txt), serve para vizualizar as <br> transições e seus estados resultantes.
 
-_input_: Pasta reservada a colocar todos os códigos a passar pelo <br>analisador léxico. O arquivo tem que ter o formato referente a linguagem apresentada: "*.cic*".
+_input_: Pasta reservada a colocar todos os códigos a passar pelo analisador léxico. <br> O arquivo tem que ter o formato referente a linguagem apresentada: "**.cic**".
 
-_logs_: Pasta reservada aos outputs dos códigos. O arquivo será formatado: "*nomedoarquivodeentrada.log*"
+_logs_: Pasta reservada aos outputs dos códigos. O arquivo será formatado: "**nomedoarquivodeentrada.log**"
 
 _codes_:
 - _reader_pointer.py_: Classe responsável por ler o arquivo de entrada.
